@@ -4,7 +4,7 @@ import { URL } from 'node:url';
 import { supabase } from './supabase.js';
 
 const PORT = process.env.PORT || 5000;
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const allowedOrigins = [
     'http://localhost:5173',
@@ -76,13 +76,16 @@ function handleDatabaseError(error) {
         '22P02': 'IDs must be valid UUIDs',
         '23514': 'Transfer data did not meet a database rule',
         '23503': 'The selected product or store is not available',
-        '23505': 'A record with the same value already exists'
+        '23505': 'A record with the same value already exists',
+        PGRST203: 'Database setup has duplicate transfer functions. Run database/schema.sql in Supabase.'
     };
     const message = safeMessages[error.code];
     const result = new Error(message || 'Database request failed');
 
-    result.status = error.code === 'P0002'
-        ? 404
+    result.status = error.code === 'PGRST203'
+        ? 500
+        : error.code === 'P0002'
+            ? 404
         : message
             ? 400
             : 500;

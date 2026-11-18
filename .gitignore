@@ -6,6 +6,3 @@ dist-ssr/
 !.env.example
 logs/
 *.log
-.agents/
-.claude/
-skills-lock.json

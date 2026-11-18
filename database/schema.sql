@@ -52,6 +52,8 @@ create table if not exists public.transfers (
     )
 );
 
+drop function if exists public.create_transfer(uuid, uuid, uuid, integer);
+
 create or replace function public.create_transfer(
     p_product_id uuid,
     p_source_store_id uuid,
