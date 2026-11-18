@@ -45,10 +45,10 @@ The schema, seed data, constraints, RLS, grants, RPC functions, and row-locking 
 ## F. Deployment
 
 - Render: NOT DEPLOYED. No Render service URL is configured in the project.
-- GitHub Pages: NOT DEPLOYED. The previous Actions run failed because Pages was not enabled for the repository.
+- GitHub Pages: NOT DEPLOYED. The latest Actions run stopped because `VITE_API_URL` is unset. An earlier run also found that Pages had not been enabled for the repository.
 - Frontend URL: `https://kirath25.github.io/estore/` is the intended URL, not a confirmed live deployment.
 - Backend URL: NOT CONFIGURED.
-- GitHub Actions variable `VITE_API_URL`: must be set to the Render service base URL without a trailing slash before deployment.
+- GitHub Actions variable `VITE_API_URL`: NOT SET. Set it to the Render service base URL without a trailing slash before deployment.
 - Render must have `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `FRONTEND_URL=https://kirath25.github.io` configured.
 
 ## G. GitHub upload
