@@ -4,6 +4,7 @@ import { URL } from 'node:url';
 import { supabase } from './supabase.js';
 
 const PORT = process.env.PORT || 5000;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const allowedOrigins = [
     'http://localhost:5173',
@@ -44,34 +45,47 @@ async function readBody(req) {
         body += chunk;
 
         if (body.length > 100000) {
-            throw new Error('Request body is too large');
+            throw Object.assign(
+                new Error('Request body is too large'),
+                { status: 413 }
+            );
         }
     }
 
     try {
-        return JSON.parse(body || '{}');
+        const data = JSON.parse(body || '{}');
+
+        if (!data || typeof data !== 'object' || Array.isArray(data)) {
+            throw new Error();
+        }
+
+        return data;
     } catch {
-        throw new Error('Invalid JSON data');
+        throw Object.assign(
+            new Error('Request body must be a JSON object'),
+            { status: 400 }
+        );
     }
 }
 
 function handleDatabaseError(error) {
-    const clientErrorCodes = [
-        'P0001',
-        '22023',
-        '22P02',
-        '23514',
-        '23503',
-        '23505'
-    ];
+    const safeMessages = {
+        P0001: error.message,
+        P0002: 'Transfer not found',
+        '22023': error.message,
+        '22P02': 'IDs must be valid UUIDs',
+        '23514': 'Transfer data did not meet a database rule',
+        '23503': 'The selected product or store is not available',
+        '23505': 'A record with the same value already exists'
+    };
+    const message = safeMessages[error.code];
+    const result = new Error(message || 'Database request failed');
 
-    const isClientError = clientErrorCodes.includes(error.code);
-
-    const result = new Error(
-        isClientError ? error.message : 'Database request failed'
-    );
-
-    result.status = isClientError ? 400 : 500;
+    result.status = error.code === 'P0002'
+        ? 404
+        : message
+            ? 400
+            : 500;
 
     return result;
 }
@@ -148,9 +162,13 @@ async function createTransfer(body) {
         quantity
     } = body;
 
-    if (!productId || !sourceStoreId || !destinationStoreId) {
+    if (
+        !UUID_PATTERN.test(productId || '') ||
+        !UUID_PATTERN.test(sourceStoreId || '') ||
+        !UUID_PATTERN.test(destinationStoreId || '')
+    ) {
         throw Object.assign(
-            new Error('Please select a product and both stores'),
+            new Error('Select a valid product and both stores'),
             { status: 400 }
         );
     }
@@ -194,6 +212,13 @@ async function createTransfer(body) {
 }
 
 async function changeTransferStatus(id, action) {
+    if (!UUID_PATTERN.test(id)) {
+        throw Object.assign(
+            new Error('Transfer ID must be a valid UUID'),
+            { status: 400 }
+        );
+    }
+
     const functionName =
         action === 'dispatch'
             ? 'dispatch_transfer'
@@ -294,12 +319,12 @@ async function handleRequest(req, res) {
         });
 
     } catch (error) {
-        console.error('Request error:', error);
+        console.error('Request failed:', error.message);
 
         sendJson(res, error.status || 500, {
             error: error.status
                 ? error.message
-                : 'Something went wrong on the server'
+                : 'The server could not complete the request'
         });
     }
 }

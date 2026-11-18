@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import {
     getStock,
@@ -32,37 +32,67 @@ function App() {
 
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
+    const dataRequestRef = useRef(null);
 
-    async function loadData() {
-        const [stockResult, transferResult] = await Promise.all([
-            getStock(),
-            getTransfers()
-        ]);
+    function loadData() {
+        if (dataRequestRef.current) {
+            return dataRequestRef.current;
+        }
 
-        setStockData(stockResult);
-        setTransfers(transferResult);
+        const request = Promise.all([getStock(), getTransfers()])
+            .then(([stockResult, transferResult]) => {
+                setStockData(stockResult);
+                setTransfers(transferResult);
 
-        setForm(current => ({
-            ...current,
-            productId:
-                current.productId ||
-                stockResult.products[0]?.id ||
-                '',
-            sourceStoreId:
-                current.sourceStoreId ||
-                stockResult.stores[0]?.id ||
-                '',
-            destinationStoreId:
-                current.destinationStoreId ||
-                stockResult.stores[1]?.id ||
-                ''
-        }));
+                setForm(current => ({
+                    ...current,
+                    productId:
+                        current.productId ||
+                        stockResult.products[0]?.id ||
+                        '',
+                    sourceStoreId:
+                        current.sourceStoreId ||
+                        stockResult.stores[0]?.id ||
+                        '',
+                    destinationStoreId:
+                        current.destinationStoreId ||
+                        stockResult.stores[1]?.id ||
+                        ''
+                }));
+            });
+
+        const trackedRequest = request.finally(() => {
+            if (dataRequestRef.current === trackedRequest) {
+                dataRequestRef.current = null;
+            }
+        });
+
+        dataRequestRef.current = trackedRequest;
+        return trackedRequest;
+    }
+
+    async function reloadAfterOperation() {
+        const currentRequest = dataRequestRef.current;
+
+        if (currentRequest) {
+            await currentRequest.catch(() => {});
+        }
+
+        await loadData();
     }
 
     useEffect(() => {
         loadData()
             .catch(err => setError(err.message))
             .finally(() => setLoading(false));
+
+        const intervalId = setInterval(() => {
+            if (!dataRequestRef.current) {
+                loadData().catch(err => setError(err.message));
+            }
+        }, 5000);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     function getQuantity(productId, storeId) {
@@ -90,7 +120,7 @@ function App() {
         setMessage('');
 
         try {
-            await loadData();
+            await reloadAfterOperation();
         } catch (err) {
             setError(err.message);
         } finally {
@@ -136,7 +166,7 @@ function App() {
                 quantity: '1'
             }));
 
-            await loadData();
+            await reloadAfterOperation();
 
         } catch (err) {
             setError(err.message);
@@ -159,14 +189,14 @@ function App() {
                 setMessage('Transfer received successfully');
             }
 
-            await loadData();
+            await reloadAfterOperation();
 
         } catch (err) {
             setError(err.message);
 
             // Reload in case another request changed the stock.
             try {
-                await loadData();
+                await reloadAfterOperation();
             } catch (refreshError) {
                 setError(refreshError.message);
             }
