@@ -29,7 +29,10 @@ The schema, seed data, constraints, RLS, grants, RPC functions, and row-locking 
 | --- | --- | --- |
 | Backend startup | PASS | Local server started on port 5000. |
 | API health | PASS | `/api/health` returned HTTP 200. |
+| Connected database read | PASS | The configured Supabase project returned 3 products, 2 stores, all 6 stock rows, the expected starting quantities, and 0 transfers. No records were written. |
+| Local app data display | PASS | The browser loaded stock from the backend at `/estore/`. |
 | Invalid JSON response | PASS | Malformed POST body returned HTTP 400. |
+| Invalid ID and zero quantity validation | PASS | Both were rejected with HTTP 400 before any database mutation. |
 | CORS | PASS | Local frontend origin allowed; unrelated origin returned HTTP 403. |
 | Frontend production build | PASS | `npm run build` succeeded. |
 | Frontend lint | PASS | `npm run lint` succeeded. |
@@ -45,7 +48,7 @@ The schema, seed data, constraints, RLS, grants, RPC functions, and row-locking 
 ## F. Deployment
 
 - Render: NOT DEPLOYED. No Render service URL is configured in the project.
-- GitHub Pages: NOT DEPLOYED. The latest Actions run stopped because `VITE_API_URL` is unset. An earlier run also found that Pages had not been enabled for the repository.
+- GitHub Pages: NOT DEPLOYED. The public URL currently returns GitHub Pages 404. The latest Actions run stopped because `VITE_API_URL` is unset. An earlier run also found that Pages had not been enabled for the repository.
 - Frontend URL: `https://kirath25.github.io/estore/` is the intended URL, not a confirmed live deployment.
 - Backend URL: NOT CONFIGURED.
 - GitHub Actions variable `VITE_API_URL`: NOT SET. Set it to the Render service base URL without a trailing slash before deployment.
