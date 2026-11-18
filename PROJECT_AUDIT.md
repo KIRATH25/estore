@@ -53,7 +53,7 @@ The schema, seed data, constraints, RLS, grants, RPC functions, and row-locking 
 
 ## G. GitHub upload
 
-This audit is prepared for `https://github.com/KIRATH25/estore`, branch `main`. Commit ID and push result will be recorded after the final commit and push.
+Commit `a03c376` was pushed to `https://github.com/KIRATH25/estore` on branch `main`. It contains the completed application changes and this audit report.
 
 ## H. Remaining work
 
@@ -72,4 +72,4 @@ This audit is prepared for `https://github.com/KIRATH25/estore`, branch `main`. 
 3. Enable GitHub Pages using Actions in repository settings.
 4. Deploy the backend on Render with root directory `backend`, build command `npm install`, and start command `npm start`.
 5. Set the Render secrets and `FRONTEND_URL=https://kirath25.github.io` in Render. Add the Render base URL as the repository Actions variable `VITE_API_URL`.
-6. Push a commit to `main` to run the Pages workflow, then test the live application.
+6. Push a commit to `main` after enabling Pages and adding `VITE_API_URL`. Confirm the workflow succeeds, then test the live application.
