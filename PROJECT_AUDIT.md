@@ -49,7 +49,7 @@ The schema, seed data, constraints, RLS, grants, RPC functions, and row-locking 
 
 - Render: PASS. The service at `https://estore-fxq0.onrender.com` is deployed. `/api/health`, `/api/stock`, and `/api/transfers` returned HTTP 200. The free service may return a temporary waking response after idle time.
 - Render CORS: PASS. A request using origin `https://kirath25.github.io` received the matching allow-origin response.
-- GitHub Pages: NOT DEPLOYED. The public URL currently returns GitHub Pages 404. The latest Actions run stopped because the repository Actions variable `VITE_API_URL` is unset. An earlier run also found that Pages had not been enabled for the repository.
+- GitHub Pages: NOT DEPLOYED. The public URL currently returns GitHub Pages 404. Latest Actions run `#6` failed at `Check backend API URL`; the repository Actions variable `VITE_API_URL` is unset. An earlier run also found that Pages had not been enabled for the repository.
 - Frontend URL: `https://kirath25.github.io/estore/` is the intended URL, not a confirmed live deployment.
 - Backend URL: `https://estore-fxq0.onrender.com`.
 - GitHub Actions variable `VITE_API_URL`: NOT SET in GitHub. Set it to `https://estore-fxq0.onrender.com` without a trailing slash before deployment. A Render environment variable does not configure a GitHub Actions build.
@@ -57,11 +57,11 @@ The schema, seed data, constraints, RLS, grants, RPC functions, and row-locking 
 
 ## G. GitHub upload
 
-Commit `a03c376` was pushed to `https://github.com/KIRATH25/estore` on branch `main`. It contains the completed application changes and this audit report.
+Commit `290c1c0` was pushed to `https://github.com/KIRATH25/estore` on branch `main`. The local branch tracks `origin/main` and is clean.
 
 ## H. Remaining work
 
-- Run both SQL files in Supabase and check that all four tables and three functions are created.
+- The live Supabase API has all four required data sets and the expected stock. Compare the deployed database functions with `database/schema.sql` when convenient; SQL execution was not available from this workspace.
 - Configure a separate Supabase test project and run the integration tests against it.
 - Enable GitHub Pages with GitHub Actions as the source in repository settings.
 - Set the GitHub Actions variable `VITE_API_URL` to the Render service URL.
@@ -70,7 +70,7 @@ Commit `a03c376` was pushed to `https://github.com/KIRATH25/estore` on branch `m
 
 ## I. What to do next
 
-1. Run `database/schema.sql` and `database/seed.sql` in the Supabase SQL Editor.
+1. The deployed Supabase API currently returns the expected stock. Compare its function definitions with `database/schema.sql` if the latest migration has not yet been applied.
 2. Create a separate test Supabase project, set its credentials in the backend environment, start the backend, then follow the test command in `README.md`.
 3. Enable GitHub Pages using Actions in repository settings.
 4. The backend is already deployed to Render at `https://estore-fxq0.onrender.com`; its environment settings and production CORS response are confirmed.
