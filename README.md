@@ -121,7 +121,9 @@ commit;
 
 The Vite base path is `/estore/`, and the frontend project URL is `https://kirath25.github.io/estore/`. In the repository's Settings, configure GitHub Pages to use GitHub Actions. Add an Actions variable named `VITE_API_URL` with the deployed Render service's base URL, without a trailing slash. The workflow fails when the variable is missing.
 
-Create a Render Web Service from this repository with these settings:
+The backend is deployed on Render at `https://estore-fxq0.onrender.com`. Its health, stock, and transfer routes have returned successful responses. The free instance can take longer to answer after it has been idle.
+
+The Render Web Service settings are:
 
 | Setting | Value |
 | --- | --- |
@@ -131,7 +133,7 @@ Create a Render Web Service from this repository with these settings:
 | Start command | `npm start` |
 | Plan | Free |
 
-Set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `FRONTEND_URL=https://kirath25.github.io` in Render. The browser origin does not include `/estore/`. Add the Render service URL to the GitHub Actions variable after deployment. No Render service URL is configured in this repository yet, so the deployed frontend and backend integration has not been checked.
+Render has `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `FRONTEND_URL=https://kirath25.github.io` configured. The browser origin does not include `/estore/`. Set the repository Actions variable `VITE_API_URL` to `https://estore-fxq0.onrender.com` without a trailing slash. This variable belongs in GitHub repository settings, not Render. The Pages site is not live yet, so the full deployed frontend-to-backend flow has not been checked.
 
 ## Limitations and possible next steps
 

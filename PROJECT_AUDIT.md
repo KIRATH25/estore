@@ -47,12 +47,13 @@ The schema, seed data, constraints, RLS, grants, RPC functions, and row-locking 
 
 ## F. Deployment
 
-- Render: NOT DEPLOYED. No Render service URL is configured in the project.
-- GitHub Pages: NOT DEPLOYED. The public URL currently returns GitHub Pages 404. The latest Actions run stopped because `VITE_API_URL` is unset. An earlier run also found that Pages had not been enabled for the repository.
+- Render: PASS. The service at `https://estore-fxq0.onrender.com` is deployed. `/api/health`, `/api/stock`, and `/api/transfers` returned HTTP 200. The free service may return a temporary waking response after idle time.
+- Render CORS: PASS. A request using origin `https://kirath25.github.io` received the matching allow-origin response.
+- GitHub Pages: NOT DEPLOYED. The public URL currently returns GitHub Pages 404. The latest Actions run stopped because the repository Actions variable `VITE_API_URL` is unset. An earlier run also found that Pages had not been enabled for the repository.
 - Frontend URL: `https://kirath25.github.io/estore/` is the intended URL, not a confirmed live deployment.
-- Backend URL: NOT CONFIGURED.
-- GitHub Actions variable `VITE_API_URL`: NOT SET. Set it to the Render service base URL without a trailing slash before deployment.
-- Render must have `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `FRONTEND_URL=https://kirath25.github.io` configured.
+- Backend URL: `https://estore-fxq0.onrender.com`.
+- GitHub Actions variable `VITE_API_URL`: NOT SET in GitHub. Set it to `https://estore-fxq0.onrender.com` without a trailing slash before deployment. A Render environment variable does not configure a GitHub Actions build.
+- Render has `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `FRONTEND_URL=https://kirath25.github.io` configured; the live CORS check confirmed the expected origin.
 
 ## G. GitHub upload
 
@@ -63,7 +64,6 @@ Commit `a03c376` was pushed to `https://github.com/KIRATH25/estore` on branch `m
 - Run both SQL files in Supabase and check that all four tables and three functions are created.
 - Configure a separate Supabase test project and run the integration tests against it.
 - Enable GitHub Pages with GitHub Actions as the source in repository settings.
-- Deploy the backend to Render and configure its environment variables.
 - Set the GitHub Actions variable `VITE_API_URL` to the Render service URL.
 - Run a fresh Pages deployment and exercise transfer, restart, and two-browser synchronization flows.
 - Frontend development dependencies have five high-severity npm audit findings in the Vite toolchain. Production dependencies have zero findings. npm currently offers only a breaking Vite downgrade as a fix.
@@ -73,6 +73,6 @@ Commit `a03c376` was pushed to `https://github.com/KIRATH25/estore` on branch `m
 1. Run `database/schema.sql` and `database/seed.sql` in the Supabase SQL Editor.
 2. Create a separate test Supabase project, set its credentials in the backend environment, start the backend, then follow the test command in `README.md`.
 3. Enable GitHub Pages using Actions in repository settings.
-4. Deploy the backend on Render with root directory `backend`, build command `npm install`, and start command `npm start`.
-5. Set the Render secrets and `FRONTEND_URL=https://kirath25.github.io` in Render. Add the Render base URL as the repository Actions variable `VITE_API_URL`.
+4. The backend is already deployed to Render at `https://estore-fxq0.onrender.com`; its environment settings and production CORS response are confirmed.
+5. In GitHub repository Settings, add an Actions variable named `VITE_API_URL` with value `https://estore-fxq0.onrender.com`. This is a URL, not a secret.
 6. Push a commit to `main` after enabling Pages and adding `VITE_API_URL`. Confirm the workflow succeeds, then test the live application.
