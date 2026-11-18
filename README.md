@@ -28,3 +28,5 @@ npm run dev
 ```
 
 Open `http://localhost:5173`. The backend uses the Supabase settings in `backend/.env`.
+
+The frontend is configured for GitHub Pages at `https://kirath25.github.io/estore/`.
