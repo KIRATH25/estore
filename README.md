@@ -1,15 +1,8 @@
 # Stock Transfer Tool
 
-A small app for tracking stock between Store A and Store B.
-
-It can:
-- Show current stock for notebooks, pens, and bottles.
-- Create and track transfers between stores.
-- Deduct stock when a transfer is dispatched.
-- Add stock when a transfer is received.
-- Refresh stock and transfer history every five seconds.
-
 ## Run locally
+
+Add your Supabase URL and service role key to `backend/.env`. Keep this file private.
 
 Start the backend in one terminal:
 
@@ -19,7 +12,7 @@ npm install
 npm start
 ```
 
-Start the frontend in another terminal:
+Start the frontend in a second terminal:
 
 ```powershell
 cd frontend
@@ -27,6 +20,18 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173`. The backend uses the Supabase settings in `backend/.env`.
+Open `http://localhost:5173`.
 
-The frontend is configured for GitHub Pages at `https://kirath25.github.io/estore/`.
+For a new database, run `database/schema.sql` and `database/seed.sql` in the Supabase SQL Editor.
+
+## Push to GitHub
+
+From the project folder, run:
+
+```powershell
+git add -A
+git commit -m "Update stock transfer app"
+git push origin main
+```
+
+The `.gitignore` excludes local environment files and generated files.
